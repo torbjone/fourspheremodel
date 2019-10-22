@@ -10,6 +10,8 @@ def extract_pots(phi, positions):
     return compt_values
 
 def main_4shell_fem(mesh, subdomains, boundaries, skull_cond, src_pos, snk_pos):
+
+    sigma_WM = Constant(params.sigma_wm)    
     sigma_B = Constant(params.sigma_brain)
     sigma_Sc = Constant(params.sigma_scalp)
     sigma_C = Constant(params.sigma_csf)
@@ -23,7 +25,9 @@ def main_4shell_fem(mesh, subdomains, boundaries, skull_cond, src_pos, snk_pos):
     phi = Function(V)
     dx = Measure("dx")[subdomains]
     ds = Measure("ds")[boundaries]
-    a = inner(sigma_B * grad(u), grad(v))*dx(params.whitemattervol) + \
+
+    a = inner(sigma_WM * grad(u), grad(v))*dx(params.centervol) + \
+        inner(sigma_WM * grad(u), grad(v))*dx(params.whitemattervol) + \
         inner(sigma_B * grad(u), grad(v))*dx(params.graymattervol) + \
         inner(sigma_Sc * grad(u), grad(v))*dx(params.scalpvol) + \
         inner(sigma_C * grad(u), grad(v))*dx(params.csfvol) + \
@@ -48,7 +52,7 @@ def main_4shell_fem(mesh, subdomains, boundaries, skull_cond, src_pos, snk_pos):
     solver.parameters["monitor_convergence"] = True
 
     info(solver.parameters, True)
-    set_log_level(PROGRESS)
+    set_log_level(LogLevel.PROGRESS)
     solver.solve(A, phi.vector(), b)
 
     ele_pos_list = params.ele_coords
@@ -56,26 +60,32 @@ def main_4shell_fem(mesh, subdomains, boundaries, skull_cond, src_pos, snk_pos):
     # np.save(os.path.join('results', save_as), vals)
     return vals
 
+
+
 if __name__ == '__main__':
-    print 'Loading meshes'
+    print('Loading meshes')
+    sim_name = params.return_sim_name()
     mesh = Mesh(os.path.join("mesh", "sphere_4.xml"))
     subdomains = MeshFunction("size_t", mesh, os.path.join("mesh", "sphere_4_physical_region.xml"))
     boundaries = MeshFunction("size_t", mesh, os.path.join("mesh", "sphere_4_facet_region.xml"))
+    
     for dipole in params.dipole_list:
-        print 'Now computing FEM for dipole: ', dipole['name']
+        print('Now computing FEM for dipole: ', dipole['name'])
         src_pos = dipole['src_pos']
         snk_pos = dipole['snk_pos']
-        print 'Done loading meshes'
+        print('Done loading meshes')
         fem_20 = main_4shell_fem(mesh, subdomains, boundaries,
-                                 params.sigma_skull20, src_pos, snk_pos)
-        print 'Done 4Shell-FEM-20'
-        fem_40 = main_4shell_fem(mesh, subdomains, boundaries,
-                                 params.sigma_skull40, src_pos, snk_pos)
-        print 'Done 4Shell-FEM-40'
-        fem_80 = main_4shell_fem(mesh, subdomains, boundaries,
-                                 params.sigma_skull80, src_pos, snk_pos)
-        print 'Done 4Shell-FEM-80'
-        f = open(os.path.join('results',
-                              'Numerical_' + dipole['name'] + '.npz'), 'w')
-        np.savez(f, fem_20=fem_20, fem_40=fem_40, fem_80=fem_80)
-        f.close()
+                                 params.sigma_skull, src_pos, snk_pos)
+        #print('Done 4Shell-FEM-20')
+        #fem_40 = main_4shell_fem(mesh, subdomains, boundaries,
+        #                         params.sigma_skull40, src_pos, snk_pos)
+        #print('Done 4Shell-FEM-40')
+        #fem_80 = main_4shell_fem(mesh, subdomains, boundaries,
+        #                         params.sigma_skull80, src_pos, snk_pos)
+        #print('Done 4Shell-FEM-80')
+        #f = open(os.path.join('results',
+        #                      'Numerical_' + dipole['name'] + '.npz'), 'w')
+        #np.savez(f, fem_20=fem_20)#, fem_40=fem_40, fem_80=fem_80)
+        #f.close()
+        np.save(os.path.join('results', 'disc_numerical_{}_{}.npy'.format(sim_name, dipole['name'])), fem_20)
+        np.save(os.path.join('results', 'elecs_{}.npy'.format(sim_name)), params.ele_coords)

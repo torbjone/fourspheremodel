@@ -45,53 +45,64 @@ Function CheeseHole
 
 Return
 
-lcar3 = 1.5;
-x = 0.; y= 0.; z=0.; r=6.0; t=1;
+lcar3 = 1.0;
+x = 0.; y= 0.; z=0.; r=6.5; t=1;
+Call CheeseHole ;
+centersurf = news;
+Physical Surface (centersurf) = {l8+1,l5+1,l1+1,l2+1,l3+1,l7+1,l6+1,l4+1}; 
+centervolume = newreg;
+Volume(centervolume) = {theloops[1]};
+centervol = newreg;
+Physical Volume (centervol) = centervolume;
+
+
+lcar3 = 0.2;
+x = 0.; y= 0.; z=0.; r=7.6; t=2;
 Call CheeseHole ;
 whitemattersurf = news;
 Physical Surface (whitemattersurf) = {l8+1,l5+1,l1+1,l2+1,l3+1,l7+1,l6+1,l4+1}; 
 whitemattervolume = newreg;
-Volume(whitemattervolume) = {theloops[1]};
+Volume(whitemattervolume) = {theloops[2], theloops[1]};
 whitemattervol = newreg;
 Physical Volume (whitemattervol) = whitemattervolume;
 
 lcar3 = .08;
-x = 0.; y= 0.; z=0.; r=7.9; t=2;
+x = 0.; y= 0.; z=0.; r=7.9; t=3;
 Call CheeseHole ;
 graymattersurf = news;
 Physical Surface (graymattersurf) = {l8+1,l5+1,l1+1,l2+1,l3+1,l7+1,l6+1,l4+1}; 
 graymattervolume = newreg;
-Volume(graymattervolume) = {theloops[2], theloops[1]};
+Volume(graymattervolume) = {theloops[3], theloops[2]};
 graymattervol = newreg;
 Physical Volume (graymattervol) = graymattervolume;
 
 lcar3 = .03;
-x = 0.; y= 0.; z=0.; r=8.; t=3;
+x = 0.; y= 0.; z=0.; r=8.; t=4;
 Call CheeseHole ;
 csfsurf = news;
 Physical Surface (csfsurf) = {l8+1,l5+1,l1+1,l2+1,l3+1,l7+1,l6+1,l4+1}; 
 csfvolume = newreg;
-Volume(csfvolume) = {theloops[3], theloops[2]};
+Volume(csfvolume) = {theloops[4], theloops[3]};
 csfvol = newreg;
 Physical Volume (csfvol) = csfvolume;
 
 lcar3 = .25;
-x = 0.; y= 0.; z=0.; r=8.5; t=4;
+x = 0.; y= 0.; z=0.; r=8.5; t=5;
 Call CheeseHole ;
 skullsurf = news;
 Physical Surface (skullsurf) = {l8+1,l5+1,l1+1,l2+1,l3+1,l7+1,l6+1,l4+1}; 
 skullvolume = newreg;
-Volume(skullvolume) = {theloops[4], theloops[3]};
+Volume(skullvolume) = {theloops[5], theloops[4]};
 skullvol = newreg;
 Physical Volume (skullvol) = skullvolume;
 
 lcar3 = .25;
-x = 0.; y= 0.; z=0.; r=9.; t=5;
+x = 0.; y= 0.; z=0.; r=9.; t=6;
 Call CheeseHole ;
 scalpsurf = news;
 Physical Surface (scalpsurf) = {l8+1,l5+1,l1+1,l2+1,l3+1,l7+1,l6+1,l4+1}; 
 scalpvolume = newreg;
-Volume(scalpvolume) = {theloops[5], theloops[4]};
+Volume(scalpvolume) = {theloops[6], theloops[5]};
 scalpvol = newreg;
 Physical Volume (scalpvol) = scalpvolume;
 
